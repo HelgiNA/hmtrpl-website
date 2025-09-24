@@ -17,7 +17,7 @@ class MemberFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_number'  => 'G1A0' . fake()->unique()->numberBetween(20, 23) . '0' . fake()->unique()->numberBetween(10, 99),
+            'student_number'  => fake()->unique()->numerify('G1A02####'),
             'full_name'       => fake()->name(),
             'enrollment_year' => fake()->numberBetween(2000, 2023),
             'email'           => fake()->unique()->safeEmail(),

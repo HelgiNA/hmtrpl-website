@@ -7,27 +7,45 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
+     * Method ini dieksekusi ketika migrasi dijalankan (`php artisan migrate`).
+     * Ini akan membuat tabel 'posts' untuk menyimpan artikel, berita, atau konten lainnya.
      */
     public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->string('slug')->unique();
-            $table->longText('content');
-            $table->text('excerp')->nullable();
-            $table->string('image')->nullable();
-            $table->enum('stung', ['draft', 'published', 'archived'])->default('draft');
+                                                                                          // Kolom-kolom utama
+            $table->id();                                                                 // ID unik untuk setiap post (Primary Key).
+            $table->string('title');                                                      // Judul post.
+            $table->string('slug')->unique();                                             // Versi URL-friendly dari judul, harus unik.
+            $table->longText('content');                                                  // Konten utama atau isi dari post.
+            $table->text('excerpt')->nullable();                                          // Ringkasan atau kutipan singkat dari post, boleh kosong.
+            $table->string('image')->nullable();                                          // Path ke file gambar utama (featured image), boleh kosong.
+            $table->enum('status', ['draft', 'published', 'archived'])->default('draft'); // Status publikasi post.
+            $table->timestamp('published_at')->nullable();                                // Waktu kapan post dipublikasikan. Null jika masih draft.
 
-            $table->foreignId('author_id')->constrained('users');
-            $table->foreignId('category_id')->constrained('categories');
-            $table->timestamps();
+            // Foreign Keys (Relasi)
+            // Relasi ke tabel 'users'. Jika penulis (user) dihapus, semua post miliknya juga akan terhapus (cascade).
+            $table->foreignId('author_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            // Relasi ke tabel 'categories'. Jika kategori dihapus, foreign key di post ini akan menjadi NULL.
+            $table->foreignId('category_id')
+                ->nullable() // Memungkinkan kolom ini menjadi null.
+                ->constrained('categories')
+                ->onUpdate('cascade')
+                ->nullOnDelete();
+
+            $table->timestamps(); // Membuat kolom `created_at` dan `updated_at` secara otomatis.
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Balikkan migrasi.
+     * Method ini dieksekusi ketika migrasi di-rollback (`php artisan migrate:rollback`).
+     * Ini akan menghapus tabel 'posts'.
      */
     public function down(): void
     {

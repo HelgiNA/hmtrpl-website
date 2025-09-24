@@ -7,20 +7,26 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
+     * Method ini dieksekusi ketika migrasi dijalankan (`php artisan migrate`).
+     * Ini akan membuat tabel 'divisions' untuk menyimpan data divisi atau departemen dalam organisasi.
      */
     public function up(): void
     {
+        // Membuat tabel 'divisions'
         Schema::create('divisions', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->text('description');
-            $table->timestamps();
+            $table->id();                     // ID unik untuk setiap divisi (Primary Key, auto-increment).
+            $table->string('name')->unique(); // Nama divisi, harus unik.
+            $table->text('description');      // Deskripsi atau penjelasan tentang divisi.
+            $table->timestamps();             // Membuat kolom `created_at` dan `updated_at` secara otomatis
+                                              // untuk melacak kapan divisi dibuat dan terakhir diperbarui.
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Balikkan migrasi.
+     * Method ini dieksekusi ketika migrasi di-rollback (`php artisan migrate:rollback`).
+     * Ini akan menghapus tabel 'divisions' jika ada.
      */
     public function down(): void
     {
